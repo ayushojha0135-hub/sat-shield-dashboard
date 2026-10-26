@@ -112,16 +112,24 @@ if "messages" not in st.session_state:
         }
     ]
 
+import streamlit.components.v1 as components
+
 def trigger_voice_alert(msg):
     js_code = f"""
-    <script>
-        var utterance = new SpeechSynthesisUtterance({repr(msg)});
-        utterance.rate = 1.0;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-    </script>
+    <div style="padding: 0px; margin: 0px;">
+        <script>
+            try {{
+                var utterance = new SpeechSynthesisUtterance({repr(msg)});
+                utterance.rate = 1.0;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            }} catch(e) {{
+                console.log("Voice error: ", e);
+            }}
+        </script>
+    </div>
     """
-    components.html(js_code, height=0, width=0)
+    components.html(js_code, height=1, width=0)
     
 def send_email_alert(subject, body, recipient_email):
     sender_email = "ayushojha0135@gmail.com"
