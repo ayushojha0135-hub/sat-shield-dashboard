@@ -8,6 +8,7 @@ import time
 import os
 import ssl
 import subprocess
+import streamlit.components.v1 as components
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
@@ -111,10 +112,17 @@ if "messages" not in st.session_state:
         }
     ]
 
-def trigger_voice_alert(enable_voice):
-    if enable_voice and os.uname().sysname == 'Darwin':
-        subprocess.Popen(["say", "Warning! Cyber attack detected. Initiating self healing protocol."])
-
+def trigger_voice_alert(msg):
+    js_code = f"""
+    <script>
+        var utterance = new SpeechSynthesisUtterance({repr(msg)});
+        utterance.rate = 1.0;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    </script>
+    """
+    components.html(js_code, height=0, width=0)
+    
 def send_email_alert(subject, body, recipient_email):
     sender_email = "ayushojha0135@gmail.com"
     sender_password = "mineagfmhgbkxesc"
